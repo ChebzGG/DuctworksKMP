@@ -1,35 +1,78 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Desktop (JVM).
+# 📐 Ductworks KMP (2D/3D CAD & Ventilation Engine)
 
-* [/iosApp](./iosApp/iosApp) contains an iOS application. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.1.0-purple?logo=kotlin)](https://kotlinlang.org/)
+[![Compose Multiplatform](https://img.shields.io/badge/Compose_Multiplatform-1.7.3-blue?logo=jetpackcompose)](https://www.jetbrains.com/lp/compose-multiplatform/)
+[![Platform](https://img.shields.io/badge/Platform-Desktop_%7C_Android-green)]()
+[![License](https://img.shields.io/badge/Status-Diploma_Project_(4th_Year)-orange)]()
 
-* [/shared](./shared/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./shared/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./shared/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./shared/src/jvmMain/kotlin)
-    folder is the appropriate location.
-
-### Running the apps
-
-Use the run configurations provided by the run widget in your IDE's toolbar. You can also use these commands and options:
-
-- Android app: `./gradlew :androidApp:assembleDebug`
-- Desktop app:
-  - Hot reload: `./gradlew :desktopApp:hotRun --auto`
-  - Standard run: `./gradlew :desktopApp:run`
-- iOS app: open the [/iosApp](./iosApp) directory in Xcode and run it from there.
-
-### Running tests
-
-Use the run button in your IDE's editor gutter, or run tests using Gradle tasks:
-
-- Android tests: `./gradlew :shared:testAndroidHostTest`
-- Desktop tests: `./gradlew :shared:jvmTest`
-- iOS tests: `./gradlew :shared:iosSimulatorArm64Test`
+> 🎓 **Выпускная квалификационная работа (ВКР бакалавра, 4 курс)**  
+> **Тема:** Разработка кроссплатформенной САПР для 2D-планирования помещений, расстановки инженерных систем и процедурной 3D-визуализации.
 
 ---
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+## 📌 О проекте
+
+**Ductworks KMP** — это кроссплатформенная система автоматизированного проектирования (САПР), разработанная на базе **Kotlin Multiplatform** и **Compose Multiplatform** с единой кодовой базой для **Desktop (Windows / macOS / Linux)** и **Android**.
+
+Приложение позволяет архитекторам, дизайнерам интерьера и инженерам вентиляционных систем:
+- Чертить векторные 2D-планы помещений любой сложности.
+- Автоматически рассчитывать площади и периметры комнат.
+- В один клик переключаться в интерактивный **3D-режим** с процедурной генерацией полигональной модели здания в реальном времени.
+- Расставлять архитектурные проёмы (двери, окна) и объекты каталога.
+- Синхронизировать проекты между ПК и мобильными устройствами через защищённое облачное хранилище.
+
+---
+
+## ✨ Ключевые возможности
+
+### 🔹 2D CAD-планирование
+* **Векторный холст:** масштабирование (Zoom), панорамирование (Pan), адаптивная координатная сетка.
+* **Smart Snap Engine:** динамическое прилипание к осям (ортогональность 0°/90°), узлам стен, точкам пересечения и перпендикулярам.
+* **Автоматическое распознавание комнат (Room Detection):** математический поиск замкнутых многоугольников стен с расчётом чистой площади пола и периметра.
+* **Каталог элементов:** двери (одностворчатые, раздвижные, входные), окна (одинарные, панорамные, эркерные), мебель и компоненты систем вентиляции (HVAC).
+* **Стилизация по ГОСТ:** простановка размеров, штриховки несущих стен и визуализация открывания дверей.
+
+### 🔹 Процедурный 3D-движок (OpenGL / Korender)
+* **Реконструкция на лету:** автоматическое выдавливание (extrusion) 2D-векторов стен в объёмные 3D-меши с вырезанием проёмов под окна и двери.
+* **Орбитальная камера:** свободный поворот (LMB/RMB), панорамирование (MMB) и приближение с защитой от инверсии осей.
+* **Раздельные высоты:** поддержка различных режимов отображения высоты стен (в полный рост, сечение на 1.2м, скрытие).
+
+### 🔹 Кроссплатформенность и облако
+* **Единый стек (KMP):** до 90% кода (математическое ядро, модели данных, UI Compose) полностью разделяются между платформами.
+* **Облачная синхронизация:** интеграция с **Supabase (PostgreSQL + S3 Storage)** с защитой проектов на уровне строк (Row Level Security).
+
+---
+
+## 🛠 Стек технологий
+
+* **Язык разработки:** Kotlin 2.1.0 (Coroutines, StateFlow, Serialization)
+* **Пользовательский интерфейс:** Jetpack Compose Multiplatform (Desktop + Android)
+* **3D Графика:** Korender (LWJGL / OpenGL аппаратное ускорение)
+* **Математическое ядро:** Собственный CAD Engine (вычислительная геометрия, полигональные расчеты, триангуляция)
+* **Бэкенд & Синхронизация:** Supabase (Auth, PostgreSQL, Cloud Storage, GitHub Actions keep-alive)
+* **Сборка и зависимости:** Gradle Version Catalogs (Kotlin Multiplatform DSL)
+
+---
+
+## 🚀 Запуск проекта
+
+### Требования
+* JDK 17 или выше
+* Android Studio Ladybug / Meerkat (с плагином KMP)
+
+### Desktop (Windows, macOS, Linux)
+```bash
+./gradlew :desktopApp:run
+```
+
+### Android
+```bash
+./gradlew :androidApp:assembleDebug
+```
+
+---
+
+## 👨‍💻 Автор
+
+* **Студент 4 курса:** ChebzGG ([GitHub](https://github.com/ChebzGG))
+* Выпускная квалификационная работа (ВКР), 2026 г.
