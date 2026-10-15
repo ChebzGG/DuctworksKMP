@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="#0F172A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <!-- 5-Star Caster Base -->
+  <line x1="24" y1="25" x2="24" y2="13" stroke="#64748B" stroke-width="2"/>
+  <line x1="24" y1="25" x2="35" y2="17" stroke="#64748B" stroke-width="2"/>
+  <line x1="24" y1="25" x2="31" y2="36" stroke="#64748B" stroke-width="2"/>
+  <line x1="24" y1="25" x2="17" y2="36" stroke="#64748B" stroke-width="2"/>
+  <line x1="24" y1="25" x2="13" y2="17" stroke="#64748B" stroke-width="2"/>
+  <circle cx="24" cy="13" r="2" fill="#334155"/>
+  <circle cx="35" cy="17" r="2" fill="#334155"/>
+  <circle cx="31" cy="36" r="2" fill="#334155"/>
+  <circle cx="17" cy="36" r="2" fill="#334155"/>
+  <circle cx="13" cy="17" r="2" fill="#334155"/>
+  
+  <!-- Center Column -->
+  <circle cx="24" cy="25" r="3" fill="#64748B"/>
+  
+  <!-- Round Seat Cushion -->
+  <circle cx="24" cy="25" r="11" fill="#E2E8F0" stroke="#0F172A" stroke-width="2"/>
+  
+  <!-- Left and Right Armrests -->
+  <rect x="8" y="19" width="4" height="11" rx="2" fill="#334155" stroke="#0F172A" stroke-width="1.5"/>
+  <rect x="36" y="19" width="4" height="11" rx="2" fill="#334155" stroke="#0F172A" stroke-width="1.5"/>
+  
+  <!-- Backrest Post -->
+  <line x1="24" y1="21" x2="24" y2="14" stroke="#475569" stroke-width="3"/>
+  
+  <!-- Ergonomic Curved Backrest (Спинка) at the top -->
+  <path d="M 13 15 Q 24 9 35 15" fill="none" stroke="#0F172A" stroke-width="4" stroke-linecap="round"/>
+  <path d="M 14 15 Q 24 10 34 15" fill="none" stroke="#334155" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

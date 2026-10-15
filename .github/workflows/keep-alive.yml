@@ -1,0 +1,30 @@
+name: Keep Supabase Alive
+
+on:
+  schedule:
+    # Запуск каждые 3 дня в 12:00 UTC (база не уснёт, так как лимит 7 дней)
+    - cron: '0 12 */3 * *'
+  workflow_dispatch: # Позволяет протестировать запуск вручную кнопкой в GitHub UI
+
+jobs:
+  ping:
+    name: Ping Supabase Database
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send keep-alive ping to Supabase REST API
+        run: |
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X GET "${{ secrets.SUPABASE_URL }}/rest/v1/" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}")
+          
+          echo "Supabase responded with HTTP status: $HTTP_STATUS"
+          
+          # 200 (OK) означает успешный ответ от REST API
+          if [ "$HTTP_STATUS" -eq 200 ]; then
+            echo "Successfully pinged Supabase! Database is active."
+            exit 0
+          else
+            echo "Unexpected HTTP status: $HTTP_STATUS (check your URL and anon key)"
+            exit 1
+          fi
