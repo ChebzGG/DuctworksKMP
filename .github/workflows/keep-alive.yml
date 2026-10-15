@@ -11,20 +11,61 @@ jobs:
     name: Ping Supabase Database
     runs-on: ubuntu-latest
     steps:
-      - name: Send keep-alive ping to Supabase REST API
+      - name: Validate secrets and ping Supabase
+        env:
+          RAW_URL: ${{ secrets.SUPABASE_URL }}
+          RAW_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
-          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-            -X GET "${{ secrets.SUPABASE_URL }}/rest/v1/" \
-            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
-            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}")
-          
-          echo "Supabase responded with HTTP status: $HTTP_STATUS"
-          
-          # 200 (OK) означает успешный ответ от REST API
-          if [ "$HTTP_STATUS" -eq 200 ]; then
-            echo "Successfully pinged Supabase! Database is active."
-            exit 0
-          else
-            echo "Unexpected HTTP status: $HTTP_STATUS (check your URL and anon key)"
+          if [ -z "$RAW_URL" ]; then
+            echo "::error::Секрет SUPABASE_URL пустой или не найден! Проверьте Settings -> Secrets and variables -> Actions"
             exit 1
           fi
+
+          if [ -z "$RAW_KEY" ]; then
+            echo "::error::Секрет SUPABASE_ANON_KEY пустой или не найден! Проверьте Settings -> Secrets and variables -> Actions"
+            exit 1
+          fi
+
+          # 1. Очистка URL и ключа от кавычек, пробелов и завершающих слэшей
+          BASE_URL=$(echo "$RAW_URL" | tr -d '[:space:]"' | sed "s/'//g" | sed 's:/*$::')
+          API_KEY=$(echo "$RAW_KEY" | tr -d '[:space:]"' | sed "s/'//g")
+
+          # 2. Если пользователь случайно вставил ссылку из адресной строки дашборда:
+          # https://supabase.com/dashboard/project/xyz -> преобразуем в https://xyz.supabase.co
+          if [[ "$BASE_URL" =~ dashboard/project/([a-zA-Z0-9]+) ]]; then
+            PROJECT_REF="${BASH_REMATCH[1]}"
+            BASE_URL="https://${PROJECT_REF}.supabase.co"
+            echo "Автоматически преобразовали URL дашборда в API URL: ${BASE_URL}"
+          fi
+
+          echo "Используем Supabase URL: ${BASE_URL}"
+
+          # 3. Пробуем сначала надежный эндпоинт Auth Health (всегда возвращает 200 при наличии apikey)
+          AUTH_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X GET "${BASE_URL}/auth/v1/health" \
+            -H "apikey: ${API_KEY}" \
+            -H "Authorization: Bearer ${API_KEY}")
+
+          echo "Auth Health HTTP Status: $AUTH_STATUS"
+
+          if [ "$AUTH_STATUS" -eq 200 ]; then
+            echo "✅ Успешно! Supabase активен (Auth Health ответил 200 OK)."
+            exit 0
+          fi
+
+          # 4. Запасная проверка через REST API
+          REST_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X GET "${BASE_URL}/rest/v1/" \
+            -H "apikey: ${API_KEY}" \
+            -H "Authorization: Bearer ${API_KEY}")
+
+          echo "REST API HTTP Status: $REST_STATUS"
+
+          if [ "$REST_STATUS" -eq 200 ]; then
+            echo "✅ Успешно! Supabase активен (REST API ответил 200 OK)."
+            exit 0
+          fi
+
+          # Если оба вернули ошибку
+          echo "::error::Не удалось получить ответ 200 от Supabase. Проверьте правильность URL и Anon Key!"
+          exit 1
